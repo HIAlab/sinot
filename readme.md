@@ -62,7 +62,7 @@ git clone https://github.com/your_username_/Project-Name.git
 ## Usage
 
 ### Create Study Parameters
-This project consists of 2 important files. The first oen is `creaty_study_parameters.py`. It transforms a DAGitty text file into the parameter file.
+This project consists of 2 important files. The first oen is `creat_study_parameters.py`. It transforms a DAGitty text file into the parameter file.
 A DAGitty text file could be found at `./example/dagitty_example.txt`. 
 
 A study parameter file `out.json` could be created by using:

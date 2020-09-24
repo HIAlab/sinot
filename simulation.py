@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 
-def simulate_outcome(outcome_params, data, length, dependencies, causal_effects, boarders=(0, 15)):
+def simulate_outcome(outcome_params, data, length, dependencies, causal_effects, treatments, boarders=(0, 15)):
     """
     Simulates an outcome based on given parameters
     :param outcome_params: parameters for outcome
@@ -13,15 +13,18 @@ def simulate_outcome(outcome_params, data, length, dependencies, causal_effects,
     :param boarders: tuple of lower, upper bound
     :return: baseline_drift, underlying_state, observation
     """
-    # Generate baselinedrift
+    # Generate baseline drift
     baseline_drift = gen_baseline_drift(x_0=outcome_params["X_0"], length=length, sigma=outcome_params["sigma_b"],
                                         outcome_scale=outcome_params["boarders"])
 
-    # unterlying state
+    # underlying state
     underlying_state = baseline_drift.copy()
     for dependency in dependencies:
-        underlying_state += np.array(data[dependency]) * causal_effects[
-            "{} -> {}".format(dependency, outcome_params["name"])]
+        if dependency in treatments:
+            underlying_state -= np.array(data["{}_dependent".format(dependency)])
+        else:
+            underlying_state += np.array(data[dependency]) * causal_effects[
+                "{} -> {}".format(dependency, outcome_params["name"])]
     underlying_state = [boarders[1] if u > boarders[1] else u for u in underlying_state]
     underlying_state = [boarders[0] if u < boarders[0] else u for u in underlying_state]
 
@@ -142,7 +145,7 @@ def gen_flag(p1=0.5, **_args):
 
 def gen_unit_distribution(min_value=0, max_value=10, **_args):
     """
-    Returns a value with equal probabilites
+    Returns a value with equal probabilities
     :param min_value:
     :param max_value:
     :param _args:
@@ -176,7 +179,7 @@ def gen_distribution(distribution, boarder=(0, 1), **params):
     elif distribution == "poisson":
         val = gen_poisson_distribution(**params)
     elif distribution == "unit":
-        val = gen_unit_distribution(**params)
+        val = gen_unit_distribution(boarder[0], boarder[1])
     else:
         val = None
     val = boarder[1] if val > boarder[1] else val
@@ -195,12 +198,16 @@ def simulate_node(node, dependencies, length, data, params, causal_effects):
     :param causal_effects: causal effect
     :return: return a list of simulated values
     """
-    result = []
-    for i in range(length):
-        variable = gen_distribution(**params)
-        for dependency in dependencies:
-            variable += data[dependency][i] * causal_effects["{} -> {}".format(dependency, node)]
-        result.append(variable)
+
+    if params["constant"]:
+        result = [gen_distribution(**params)] * length
+    else:
+        result = []
+        for i in range(length):
+            variable = gen_distribution(**params)
+            for dependency in dependencies:
+                variable += data[dependency][i] * causal_effects["{} -> {}".format(dependency, node)]
+            result.append(variable)
     return result
 
 
@@ -267,6 +274,7 @@ class Simulation:
                                      data=result,
                                      length=length,
                                      dependencies=self.dependencies[node],
+                                     treatments=list(self.exposures_params.keys()),
                                      causal_effects=self.effect_sizes)
                 result["baseline_drift"], result["underlying_state"], result[node] = o
             # if node is variable

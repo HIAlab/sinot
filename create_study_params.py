@@ -17,13 +17,12 @@ def create_study_params(file_path):
     outgoing = []
     incoming = []
 
-    def_parmas = {"outcome": False,
-                  "exposure": False,
-                  "constant": False,
-                  "distribution": "normal",
-                  "mean": 0,
-                  "std": 1,
-                  "boarders": (-1, 1)}
+    def_parmas = {
+        "constant": False,
+        "distribution": "normal",
+        "mean": 0,
+        "std": 1,
+        "boarders": (-1, 1)}
 
     exposures = []
     outcomes = []
