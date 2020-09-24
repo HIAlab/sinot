@@ -17,7 +17,6 @@
   * [Prerequisites](#prerequisites)
   * [Installation](#installation)
 * [Usage](#usage)
-* [Roadmap](#roadmap)
 * [Contributing](#contributing)
 * [License](#license)
 * [Contact](#contact)
@@ -27,7 +26,7 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-During my master thesis, I am focussing on causal effects in N of 1 studies. Unfortunately there was no library avialable, which meets my needs. Hence, I created my own library for simulating data in this context to test different methods on it.  
+During my master thesis, I am focussing on causal effects in N of 1 studies. Unfortunately there was no library available, which meets my needs. Hence, I created my own library for simulating data in this context to test different methods on it.  
 
 ### Built With
 This project is build on `python 3.8` and is using following libraries: 
@@ -62,7 +61,21 @@ git clone https://github.com/your_username_/Project-Name.git
 <!-- USAGE EXAMPLES -->
 ## Usage
 
+### Create Study Parameters
+This project consists of 2 important files. The first oen is `creaty_study_parameters.py`. It transforms a DAGitty text file into the parameter file.
+A DAGitty text file could be found at `./example/dagitty_example.txt`. 
 
+A study parameter file `out.json` could be created by using:
+```sh 
+python create_study_params.py ./example/dagitty_example.txt example/out.json
+```
+
+If you need help, you can simply use the option `--help`:
+```sh 
+python create_study_params.py --help
+```
+
+### Simulate Data
 
 
 <!-- CONTRIBUTING -->
