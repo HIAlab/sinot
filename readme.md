@@ -101,7 +101,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Thomas Gärtner - [![LinkedIn][linkedin-shield]][linkedin-url] - thomas.gaertner@student.hpi.de
+Thomas Gärtner - [Linked In][linkedin-url] - [thomas.gaertner@student.hpi.de](mailto:thomas.gaertner@student.hpi.de)
 
 Project Link: [https://github.com/tommysft/n-of-1-simulation](https://github.com/tommysft/n-of-1-simulation)
 
