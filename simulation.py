@@ -21,7 +21,7 @@ def simulate_outcome(outcome_params, data, length, dependencies, causal_effects,
     underlying_state = baseline_drift.copy()
     for dependency in dependencies:
         if dependency in treatments:
-            underlying_state -= np.array(data["{}_dependent".format(dependency)])
+            underlying_state += np.array(data["{}_dependent".format(dependency)])
         else:
             underlying_state += np.array(data[dependency]) * causal_effects[
                 "{} -> {}".format(dependency, outcome_params["name"])]
@@ -30,6 +30,9 @@ def simulate_outcome(outcome_params, data, length, dependencies, causal_effects,
 
     # Observation
     observation = [round(u + np.random.normal(0, outcome_params["sigma_0"])) for u in underlying_state]
+
+    observation = [boarders[1] if u > boarders[1] else u for u in observation]
+    observation = [boarders[0] if u < boarders[0] else u for u in observation]
 
     return baseline_drift, underlying_state, observation
 
@@ -227,7 +230,7 @@ class Simulation:
             [*self.variables.keys(), *self.exposures_params, self.outcome_params["name"]], parameter["dependencies"])
         self.effect_sizes = parameter["dependencies"]
 
-    def gen_patient(self, study_design, days_per_period):
+    def gen_patient(self, study_design, days_per_period, patient_id = 0):
         """
         This function generates a person
         :param study_design: study design
@@ -241,8 +244,8 @@ class Simulation:
         def _order_nodes(dependency_dict):
             final_order = []
             dependencies = [(n, set(dependency_dict[n])) for n in dependency_dict]
-            dependencies.sort(key=lambda s: len(s[1]))
             while len(dependencies) > 0:
+                dependencies.sort(key=lambda s: len(s[1]))
                 if len(dependencies[0][1]) == 0:
                     n = dependencies.pop(0)[0]
                     final_order.append(n)
@@ -256,7 +259,9 @@ class Simulation:
         ordered_node = _order_nodes(self.dependencies)
 
         # Generate Data
-        result = {}
+        result = {'patient_id': [patient_id]*length,
+                  'day': [i+1 for i in range(length)]}
+
         for node in ordered_node:
             # if node is exposure
             if node in list(self.exposures_params.keys()):
