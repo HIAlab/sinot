@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 
-def simulate_outcome(outcome_params, data, length, dependencies, causal_effects, treatments, boarders=(0, 15)):
+def simulate_outcome(outcome_params, data, length, dependencies, causal_effects, treatments, boarders=(0, 15), over_time_effects=None):
     """
     Simulates an outcome based on given parameters
     :param outcome_params: parameters for outcome
@@ -25,6 +25,12 @@ def simulate_outcome(outcome_params, data, length, dependencies, causal_effects,
         else:
             underlying_state += np.array(data[dependency]) * causal_effects[
                 "{} -> {}".format(dependency, outcome_params["name"])]
+
+    if over_time_effects:
+        for dependency in list(over_time_effects):
+            for lag, effect in  enumerate(over_time_effects[dependency]["effects"]):
+                underlying_state += data[dependency][i-1-lag] * effect if (i-1-lag)>=0 else  0 
+
     underlying_state = [boarders[1] if u > boarders[1] else u for u in underlying_state]
     underlying_state = [boarders[0] if u < boarders[0] else u for u in underlying_state]
 
@@ -50,20 +56,30 @@ def simulate_treatment(study_design, days_per_period, treatment, dependencies, p
     :return: treatment_arr, treatment_independent, dependent_treatment_effect
     """
     treatment_arr = []
+    
+    # Generate treatment array based on default study design
     for i in range(0, len(study_design)):
         if study_design[i] == treatment:
             treatment_arr.extend([1] * days_per_period)
         else:
             treatment_arr.extend([0] * days_per_period)
+
+    # Add dependencies
+    for dependency in dependencies:
+        treatment_arr += np.array(data[dependency]) * causal_effects[
+            "{} -> {}".format(dependency, treatment)]
+    
+    # Clip treatment to 1 or 0 
+    treatment_arr = np.where(treatment_arr>= 0.5, 1, 0)
+
+    # Get Params
     gamma = params["gamma"]
     tau = params["tau"]
     treatment_effect = params["treatment_effect"]
-    treatment_independent = gen_treatment_effect(treatment_arr, gamma, tau, treatment_effect)
-    dependent_treatment_effect = treatment_independent.copy()
-    for dependency in dependencies:
-        dependent_treatment_effect += np.array(data[dependency]) * causal_effects[
-            "{} -> {}".format(dependency, treatment)]
-    return treatment_arr, treatment_independent, dependent_treatment_effect
+    
+    # Generate 
+    treatment_effects_array = gen_treatment_effect(treatment_arr, gamma, tau, treatment_effect)
+    return treatment_arr, treatment_effects_array
 
 
 def gen_treatment_effect(treatment, gamma, tau, treatment_effect):
@@ -190,7 +206,7 @@ def gen_distribution(distribution, boarder=(0, 1), **params):
     return val
 
 
-def simulate_node(node, dependencies, length, data, params, causal_effects):
+def simulate_node(node, dependencies, length, data, params, causal_effects, over_time_effects=None):
     """
     This function simulates a node / feature
     :param node: name of the feature
@@ -210,8 +226,42 @@ def simulate_node(node, dependencies, length, data, params, causal_effects):
             variable = gen_distribution(**params)
             for dependency in dependencies:
                 variable += data[dependency][i] * causal_effects["{} -> {}".format(dependency, node)]
+            if over_time_effects:
+                for dependency in list(over_time_effects):
+                    for lag, effect in  enumerate(over_time_effects[dependency]["effects"]):
+                        variable += data[dependency][i-1-lag] * effect if (i-1-lag)>=0 else 0 
             result.append(variable)
     return result
+
+
+def gen_drop_out(data, fraction = None, vacation = None, keep_columns = []):
+    """
+    This function generates a random drop out.
+    :param data: pandas df with patient data
+    :param vacation: number of vacation days
+    :param fraction: fraction of sampling
+    :return: pandas data frame
+    """
+
+
+    treatment_data = data[keep_columns]
+
+    # Apply vacation:
+    # Continues period without any data
+    if vacation:
+        start = np.random.randint(1,len(data)-vacation)
+        data = pd.concat([data[:start], data[start+vacation:]])
+
+    # Drop out:
+    # random drop out of data 
+    if fraction:
+        weights_drop_out = 1/(np.array(list(range(len(data))))+1)**2
+        weights_drop_out = 1/(np.array(list(range(len(data))))+1)
+        data = data.sample(frac = fraction, weights = weights_drop_out)
+
+    # ToDo: Others?
+    data = treatment_data.join(data.drop(columns = keep_columns))
+    return data.sort_index()
 
 
 class Simulation:
@@ -229,8 +279,16 @@ class Simulation:
         self.dependencies = extract_dependencies(
             [*self.variables.keys(), *self.exposures_params, self.outcome_params["name"]], parameter["dependencies"])
         self.effect_sizes = parameter["dependencies"]
+        if "over_time_dependencies" in parameter.keys():
+            self.over_time_dependencies = parameter["over_time_dependencies"]
+        else:
+            self.over_time_dependencies = {}
+        if "drop_out" in parameter.keys():
+            self.drop_out = parameter["drop_out"]
+        else:
+            self.drop_out = {}
 
-    def gen_patient(self, study_design, days_per_period, patient_id = 0):
+    def gen_patient(self, study_design, days_per_period, patient_id = 0, drop_out=None, first_day='2018-01-01'):
         """
         This function generates a person
         :param study_design: study design
@@ -239,6 +297,9 @@ class Simulation:
         """
         # Define length of study
         length = len(study_design) * days_per_period
+
+        # Generate Dateindex
+        dti = pd.date_range(first_day, periods=length, freq='D')
 
         # Generate Variables with dependencies
         def _order_nodes(dependency_dict):
@@ -260,9 +321,12 @@ class Simulation:
 
         # Generate Data
         result = {'patient_id': [patient_id]*length,
-                  'day': [i+1 for i in range(length)]}
+                  'date': dti,
+                  'day': list(range(1,length+1))}
 
         for node in ordered_node:
+            if node not in list(self.over_time_dependencies.keys()):
+                self.over_time_dependencies[node] = None
             # if node is exposure
             if node in list(self.exposures_params.keys()):
                 t = simulate_treatment(study_design,
@@ -272,7 +336,7 @@ class Simulation:
                                        self.exposures_params[node],
                                        self.effect_sizes,
                                        result)
-                result[node], result["{}_independent".format(node)], result["{}_dependent".format(node)] = t
+                result[node], result["{}_effect".format(node)] = t
             # generate outcome
             elif node == self.outcome_params["name"]:
                 o = simulate_outcome(outcome_params=self.outcome_params,
@@ -280,10 +344,16 @@ class Simulation:
                                      length=length,
                                      dependencies=self.dependencies[node],
                                      treatments=list(self.exposures_params.keys()),
-                                     causal_effects=self.effect_sizes)
+                                     causal_effects=self.effect_sizes,
+                                     over_time_effects = self.over_time_dependencies[node])
                 result["baseline_drift"], result["underlying_state"], result[node] = o
             # if node is variable
             else:
                 result[node] = simulate_node(node, self.dependencies[node], length, result, params=self.variables[node],
-                                             causal_effects=self.effect_sizes)
-        return pd.DataFrame(result)
+                                             causal_effects=self.effect_sizes,over_time_effects = self.over_time_dependencies[node])
+
+        data = pd.DataFrame(result)
+
+        if drop_out:
+            return data, gen_drop_out(data.copy(), keep_columns=list(self.exposures_params.keys()), **drop_out)
+        return data
