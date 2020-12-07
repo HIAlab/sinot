@@ -21,15 +21,16 @@ def simulate_outcome(outcome_params, data, length, dependencies, causal_effects,
     underlying_state = baseline_drift.copy()
     for dependency in dependencies:
         if dependency in treatments:
-            underlying_state += np.array(data["{}_dependent".format(dependency)])
+            underlying_state += np.array(data["{}_effect".format(dependency)])
         else:
             underlying_state += np.array(data[dependency]) * causal_effects[
                 "{} -> {}".format(dependency, outcome_params["name"])]
 
     if over_time_effects:
         for dependency in list(over_time_effects):
-            for lag, effect in  enumerate(over_time_effects[dependency]["effects"]):
-                underlying_state += data[dependency][i-1-lag] * effect if (i-1-lag)>=0 else  0 
+            for i in len(underlying_state):
+                for lag, effect in  enumerate(over_time_effects[dependency]["effects"]):
+                    underlying_state[i] += data[dependency][i-1-lag] * effect if (i-1-lag)>=0 else 0 
 
     underlying_state = [boarders[1] if u > boarders[1] else u for u in underlying_state]
     underlying_state = [boarders[0] if u < boarders[0] else u for u in underlying_state]
@@ -53,7 +54,7 @@ def simulate_treatment(study_design, days_per_period, treatment, dependencies, p
     :param params: additional params
     :param causal_effects: causal effects
     :param data: generated data
-    :return: treatment_arr, treatment_independent, dependent_treatment_effect
+    :return: treatment_arr, treatment_effect
     """
     treatment_arr = []
     
@@ -70,7 +71,7 @@ def simulate_treatment(study_design, days_per_period, treatment, dependencies, p
             "{} -> {}".format(dependency, treatment)]
     
     # Clip treatment to 1 or 0 
-    treatment_arr = np.where(treatment_arr>= 0.5, 1, 0)
+    treatment_arr = np.where(np.array(treatment_arr)>= 0.5, 1, 0)
 
     # Get Params
     gamma = params["gamma"]
@@ -183,7 +184,7 @@ def gen_poisson_distribution(lam, **_args):
     return np.random.poisson(lam)
 
 
-def gen_distribution(distribution, boarder=(0, 1), **params):
+def gen_distribution(distribution, boarders=(0, 1), **params):
     """
     Generated a value of a given distribution and params.
     :param distribution: name of distribution (normal, poisson, unit, flag)
@@ -198,11 +199,14 @@ def gen_distribution(distribution, boarder=(0, 1), **params):
     elif distribution == "poisson":
         val = gen_poisson_distribution(**params)
     elif distribution == "unit":
-        val = gen_unit_distribution(boarder[0], boarder[1])
+        val = gen_unit_distribution(boarders[0], boarders[1])
     else:
         val = None
-    val = boarder[1] if val > boarder[1] else val
-    val = boarder[0] if val < boarder[0] else val
+    
+    if boarders[1]:
+        val = boarders[1] if val > boarders[1] else val 
+    if boarders[0]:
+        val = boarders[0] if val < boarders[0] else val
     return val
 
 
@@ -234,7 +238,7 @@ def simulate_node(node, dependencies, length, data, params, causal_effects, over
     return result
 
 
-def gen_drop_out(data, fraction = None, vacation = None, keep_columns = []):
+def gen_drop_out(data, fraction = None, vacation = None, drop_columns = None):
     """
     This function generates a random drop out.
     :param data: pandas df with patient data
@@ -243,8 +247,11 @@ def gen_drop_out(data, fraction = None, vacation = None, keep_columns = []):
     :return: pandas data frame
     """
 
+    if not drop_columns:
+        keep_columns = ["patient_id","date","day","Treatment_1","Treatment_2"]
+        drop_columns = list(set(list(data.columns))-set(keep_columns))
 
-    treatment_data = data[keep_columns]
+    treatment_data = data.copy().drop(columns = drop_columns)
 
     # Apply vacation:
     # Continues period without any data
@@ -260,7 +267,7 @@ def gen_drop_out(data, fraction = None, vacation = None, keep_columns = []):
         data = data.sample(frac = fraction, weights = weights_drop_out)
 
     # ToDo: Others?
-    data = treatment_data.join(data.drop(columns = keep_columns))
+    data = treatment_data.join(data[drop_columns])
     return data.sort_index()
 
 
@@ -274,7 +281,6 @@ class Simulation:
         self.exposures_params = parameter["exposures"]
         self.outcome_params = parameter["outcome"]
 
-        #        self.length_of_study = len(study_design)*days_per_period
         self.variables = parameter["variables"]
         self.dependencies = extract_dependencies(
             [*self.variables.keys(), *self.exposures_params, self.outcome_params["name"]], parameter["dependencies"])
@@ -355,5 +361,5 @@ class Simulation:
         data = pd.DataFrame(result)
 
         if drop_out:
-            return data, gen_drop_out(data.copy(), keep_columns=list(self.exposures_params.keys()), **drop_out)
+            return data, gen_drop_out(data.copy(), **drop_out)
         return data
