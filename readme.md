@@ -32,6 +32,7 @@ During my master thesis, I am focussing on causal effects in N of 1 studies. Unf
 This project is build on `python 3.8` and is using following libraries: 
 * Numpy
 * Pandas
+* Matplotlib
 
 For detailed description you can have a look into `requirements.txt`.
 
@@ -45,15 +46,15 @@ Here you can see, how to use the library.
 Python is required for this package. For that, I used anaconda and created my own environment with in it. 
 Afterwards I installed all requirements within this environment with:
 
-```sh
+```shell
 pip install -r requirements.txt
 ```
 
 ### Installation
 
 1. Clone the repo
-```sh
-git clone https://github.com/your_username_/Project-Name.git
+```shell
+git clone https://github.com/tommysft/n-of-1-simulation
 ```
 2. Use the python functions within python or shell
 
@@ -62,20 +63,29 @@ git clone https://github.com/your_username_/Project-Name.git
 ## Usage
 
 ### Create Study Parameters
-This project consists of 2 important files. The first oen is `creat_study_parameters.py`. It transforms a DAGitty text file into the parameter file.
+This project consists of 2 functions. The first oen is `creat_study_parameters.py`. It transforms a DAGitty text file into the parameter file.
 A DAGitty text file could be found at `./example/dagitty_example.txt`. 
 
 A study parameter file `out.json` could be created by using:
-```sh 
+```shell
 python create_study_params.py ./example/dagitty_example.txt example/out.json
 ```
 
 If you need help, you can simply use the option `--help`:
-```sh 
+```shell 
 python create_study_params.py --help
 ```
 
 ### Simulate Data
+
+To simulate data, you use functions from `simulation.py` to create a cohort based on a parameters file.
+
+```python
+sim = Simulation(study_params)
+pat_complete, pat_drop = sim.gen_patient([None,"Treatment_1","Treatment_2", "Treatment_1","Treatment_2"], 28, drop_out=drop_out)
+```
+
+A complete example of simulation data could be found in `Simulate_Example.ipynb`.
 
 
 <!-- CONTRIBUTING -->
