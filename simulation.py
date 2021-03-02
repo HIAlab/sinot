@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-
+import matplotlib.pyplot as plt
 
 def simulate_outcome(outcome_params, data, length, dependencies, causal_effects, treatments, boarders=(0, 15), over_time_effects=None):
     """
@@ -363,3 +363,30 @@ class Simulation:
         if drop_out:
             return data, gen_drop_out(data.copy(), **drop_out)
         return data
+
+    def plot_patient(self, patient):
+        """
+        This functions plot a random patient.
+        :return: None
+        """
+        plt.figure(dpi=(100))
+        plt.plot(patient["baseline_drift"], label="Baseline")
+        plt.plot(patient["underlying_state"], label="Underlying State")
+        plt.plot(patient[self.outcome_params["name"]], label="Observation", linestyle="", marker="x")
+        plt.legend(loc='lower left')
+        plt.xlabel("Day")
+        plt.ylabel("Outcome")
+        plt.show()
+        plt.figure(dpi=(100))
+
+        overall_treatment_effect = [0]*len(patient)
+
+        for t in self.exposures_params:
+            plt.plot(patient["{}_effect".format(t)], label=t)
+            overall_treatment_effect += patient["{}_effect".format(t)]
+        plt.plot(np.array(overall_treatment_effect),
+                 label="Overall Treatment Effect", linestyle=":")
+        plt.legend(loc='lower left')
+        plt.xlabel("Day")
+        plt.ylabel("Treatment Effect")
+        plt.show()
