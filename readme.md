@@ -82,7 +82,7 @@ To simulate data, you use functions from `simulation.py` to create a cohort base
 
 ```python
 sim = Simulation(study_params)
-pat_complete, pat_drop = sim.gen_patient([None,"Treatment_1","Treatment_2", "Treatment_1","Treatment_2"], 28, drop_out=drop_out)
+pat_complete, pat_drop = sim.gen_patient(study_design, days_per_period, drop_out=drop_out)
 ```
 
 A complete example of simulation data could be found in `Simulate_Example.ipynb`.
