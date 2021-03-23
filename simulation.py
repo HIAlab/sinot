@@ -304,8 +304,11 @@ class Simulation:
         # Define length of study
         length = len(study_design) * days_per_period
 
-        # Generate Dateindex
+        # Generate Dateindex, Treatmentvariable and bloc
         dti = pd.date_range(first_day, periods=length, freq='D')
+        treatment = sum([[t]*days_per_period for t in study_design], [])
+        block = sum([[i+1]*days_per_period for i, _ in enumerate(study_design)], [])
+
 
         # Generate Variables with dependencies
         def _order_nodes(dependency_dict):
@@ -328,6 +331,8 @@ class Simulation:
         # Generate Data
         result = {'patient_id': [patient_id]*length,
                   'date': dti,
+                  'block': block,
+                  'treatment': treatment,
                   'day': list(range(1,length+1))}
 
         for node in ordered_node:
