@@ -28,7 +28,7 @@ def simulate_outcome(outcome_params, data, length, dependencies, causal_effects,
 
     if over_time_effects:
         for dependency in list(over_time_effects):
-            for i in len(underlying_state):
+            for i in range(len(underlying_state)):
                 for lag, effect in  enumerate(over_time_effects[dependency]["effects"]):
                     underlying_state[i] += data[dependency][i-1-lag] * effect if (i-1-lag)>=0 else 0 
 
@@ -235,6 +235,11 @@ def simulate_node(node, dependencies, length, data, params, causal_effects, over
                     for lag, effect in  enumerate(over_time_effects[dependency]["effects"]):
                         variable += data[dependency][i-1-lag] * effect if (i-1-lag)>=0 else 0 
             result.append(variable)
+    if params["boarders"]:
+        if params["boarders"][0]:
+            result = [params["boarders"][0] if val<params["boarders"][0] else val for val in result]
+        if params["boarders"][1]:
+            result = [params["boarders"][1] if val>params["boarders"][1] else val for val in result]
     return result
 
 
