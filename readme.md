@@ -6,7 +6,7 @@
 [![MIT License][license-shield]][license-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
 
-
+# Simulation of N-of-One Trials (SiNOT)
 
 <!-- TABLE OF CONTENTS -->
 ## Table of Contents
@@ -113,7 +113,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 Thomas Gärtner - [Linked In][linkedin-url] - [thomas.gaertner@student.hpi.de](mailto:thomas.gaertner@student.hpi.de)
 
-Project Link: [https://github.com/thogaertner/n-of-1-simulation](https://github.com/thogaertner/n-of-1-simulation)
+Project Link: [https://github.com/thogaertner/sinot](https://github.com/thogaertner/sinot)
 
 
 
@@ -124,15 +124,15 @@ Project Link: [https://github.com/thogaertner/n-of-1-simulation](https://github.
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/thogaertner/n-of-1-simulation.svg?style=flat-square
-[contributors-url]: https://github.com/thogaertner/n-of-1-simulation/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/thogaertner/n-of-1-simulation.svg?style=flat-square
-[forks-url]: https://github.com/thogaertner/n-of-1-simulation/network/members
-[stars-shield]: https://img.shields.io/github/stars/thogaertner/n-of-1-simulation.svg?style=flat-square
-[stars-url]: vhttps://github.com/thogaertner/n-of-1-simulation/stargazers
-[issues-shield]: https://img.shields.io/github/issues/thogaertner/n-of-1-simulation.svg?style=flat-square
-[issues-url]: https://github.com/thogaertner/n-of-1-simulation/issues
-[license-shield]: https://img.shields.io/github/license/thogaertner/n-of-1-simulation.svg?style=flat-square
+[contributors-shield]: https://img.shields.io/github/contributors/thogaertner/sinot.svg?style=flat-square
+[contributors-url]: https://github.com/thogaertner/sinot/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/thogaertner/sinot.svg?style=flat-square
+[forks-url]: https://github.com/thogaertner/sinot/network/members
+[stars-shield]: https://img.shields.io/github/stars/thogaertner/sinot.svg?style=flat-square
+[stars-url]: vhttps://github.com/thogaertner/sinot/stargazers
+[issues-shield]: https://img.shields.io/github/issues/thogaertner/sinot.svg?style=flat-square
+[issues-url]: https://github.com/thogaertner/sinot/issues
+[license-shield]: https://img.shields.io/github/license/thogaertner/sinot.svg?style=flat-square
 [license-url]: XXX
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/thomas-g%C3%A4rtner-490658143/
