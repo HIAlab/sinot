@@ -120,8 +120,6 @@ Project Link: [https://github.com/thogaertner/sinot](https://github.com/thogaert
 <!-- ACKNOWLEDGEMENTS -->
 ## Acknowledgements
 
-
-
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 [contributors-shield]: https://img.shields.io/github/contributors/thogaertner/sinot.svg?style=flat-square
@@ -133,6 +131,6 @@ Project Link: [https://github.com/thogaertner/sinot](https://github.com/thogaert
 [issues-shield]: https://img.shields.io/github/issues/thogaertner/sinot.svg?style=flat-square
 [issues-url]: https://github.com/thogaertner/sinot/issues
 [license-shield]: https://img.shields.io/github/license/thogaertner/sinot.svg?style=flat-square
-[license-url]: XXX
+[license-url]: LICENSE.md
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/thomas-g%C3%A4rtner-490658143/
