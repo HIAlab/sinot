@@ -26,13 +26,13 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-During my master thesis, I am focussing on causal effects in N of 1 studies. Unfortunately there was no library available, which meets my needs. Hence, I created my own library for simulating data in this context to test different methods on it.  
+The project started with a master thesis on analysing causal effects in N of 1 studies. Unfortunately there was no library available, which meets the needs. Hence, this package was created. Within this package, data of N-of-1 studies could be created though a DAG file and a configuration file. 
 
 ### Built With
 This project is build on `python 3.8` and is using following libraries: 
 * Numpy
 * Pandas
-* Matplotlib
+* (Matplotlib)
 
 For detailed description you can have a look into `requirements.txt`.
 
