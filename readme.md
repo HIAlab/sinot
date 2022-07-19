@@ -113,7 +113,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 Thomas Gärtner - [Linked In][linkedin-url] - [thomas.gaertner@student.hpi.de](mailto:thomas.gaertner@student.hpi.de)
 
-Project Link: [https://github.com/thogaertner/sinot](https://github.com/thogaertner/sinot)
+Project Link: [github.com/HIAlab/sinot](github.com/HIAlab/sinot)
 
 
 
