@@ -6,7 +6,7 @@
 [![MIT License][license-shield]][license-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
 
-
+# Simulation of N-of-One Trials (SiNOT)
 
 <!-- TABLE OF CONTENTS -->
 ## Table of Contents
@@ -26,13 +26,13 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-During my master thesis, I am focussing on causal effects in N of 1 studies. Unfortunately there was no library available, which meets my needs. Hence, I created my own library for simulating data in this context to test different methods on it.  
+The project started with a master thesis on analysing causal effects in N of 1 studies. Unfortunately there was no library available, which meets the needs. Hence, this package was created. Within this package, data of N-of-1 studies could be created though a DAG file and a configuration file. 
 
 ### Built With
 This project is build on `python 3.8` and is using following libraries: 
 * Numpy
 * Pandas
-* Matplotlib
+* (Matplotlib)
 
 For detailed description you can have a look into `requirements.txt`.
 
@@ -54,7 +54,7 @@ pip install -r requirements.txt
 
 1. Clone the repo
 ```shell
-git clone https://github.com/tommysft/n-of-1-simulation
+git clone https://github.com/thogaertner/n-of-1-simulation
 ```
 2. Use the python functions within python or shell
 
@@ -113,26 +113,24 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 Thomas Gärtner - [Linked In][linkedin-url] - [thomas.gaertner@student.hpi.de](mailto:thomas.gaertner@student.hpi.de)
 
-Project Link: [https://github.com/tommysft/n-of-1-simulation](https://github.com/tommysft/n-of-1-simulation)
+Project Link: [https://www.github.com/HIAlab/sinot](https://www.github.com/HIAlab/sinot)
 
 
 
 <!-- ACKNOWLEDGEMENTS -->
 ## Acknowledgements
 
-
-
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/tommysft/n-of-1-simulation.svg?style=flat-square
-[contributors-url]: https://github.com/tommysft/n-of-1-simulation/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/tommysft/n-of-1-simulation.svg?style=flat-square
-[forks-url]: https://github.com/tommysft/n-of-1-simulation/network/members
-[stars-shield]: https://img.shields.io/github/stars/tommysft/n-of-1-simulation.svg?style=flat-square
-[stars-url]: vhttps://github.com/tommysft/n-of-1-simulation/stargazers
-[issues-shield]: https://img.shields.io/github/issues/tommysft/n-of-1-simulation.svg?style=flat-square
-[issues-url]: https://github.com/tommysft/n-of-1-simulation/issues
-[license-shield]: https://img.shields.io/github/license/tommysft/n-of-1-simulation.svg?style=flat-square
-[license-url]: XXX
+[contributors-shield]: https://img.shields.io/github/contributors/thogaertner/sinot.svg?style=flat-square
+[contributors-url]: https://github.com/thogaertner/sinot/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/thogaertner/sinot.svg?style=flat-square
+[forks-url]: https://github.com/thogaertner/sinot/network/members
+[stars-shield]: https://img.shields.io/github/stars/thogaertner/sinot.svg?style=flat-square
+[stars-url]: vhttps://github.com/thogaertner/sinot/stargazers
+[issues-shield]: https://img.shields.io/github/issues/thogaertner/sinot.svg?style=flat-square
+[issues-url]: https://github.com/thogaertner/sinot/issues
+[license-shield]: https://img.shields.io/github/license/thogaertner/sinot.svg?style=flat-square
+[license-url]: https://github.com/thogaertner/sinot/blob/master/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/thomas-g%C3%A4rtner-490658143/
