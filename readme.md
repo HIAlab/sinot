@@ -4,7 +4,6 @@
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
 
 # Simulation of N-of-One Trials (SiNOT)
 
@@ -26,7 +25,7 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-The project started with a master thesis on analysing causal effects in N of 1 studies. Unfortunately there was no library available, which meets the needs. Hence, this package was created. Within this package, data of N-of-1 studies could be created though a DAG file and a configuration file. 
+The project started with a master thesis on analysing causal effects in N of 1 studies. Unfortunately there was no library available, which meets the needs. Hence, this package was created. Within this package, data of N-of-1 studies could be created though a DAG file and a configuration file. A preprint of the related publication could be found on [medRxiv](https://www.medrxiv.org/content/10.1101/2022.07.21.22277832v1).
 
 ### Built With
 This project is build on `python 3.8` and is using following libraries: 
@@ -111,7 +110,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Thomas Gärtner - [Linked In][linkedin-url] - [thomas.gaertner@student.hpi.de](mailto:thomas.gaertner@student.hpi.de)
+Thomas Gärtner - [Linked In][linkedin-url] - [thomas.gaertner[at]hpi.de](mailto:thomas.gaertner@hpi.de)
 
 Project Link: [https://www.github.com/HIAlab/sinot](https://www.github.com/HIAlab/sinot)
 
