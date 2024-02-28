@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sinot"
+version = "0.0.1"
+authors = [
+  { name="thogeartner", email="thomas.gaertner@hpi.de" },
+]
+description = "Python package for simulating N-of-1 Trials."
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+  "matplotlib",
+  "numpy",
+  "pandas"
+]
+
+[project.urls]
+Homepage = "https://github.com/HIAlab/sinot"
+Issues = "https://github.com/HIAlab/sinot/issues"
