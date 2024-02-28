@@ -15,7 +15,7 @@ def simulate_outcome(outcome_params, data, length, dependencies, causal_effects,
     """
     # Generate baseline drift
     baseline_drift = gen_baseline_drift(x_0=outcome_params["X_0"], length=length, sigma=outcome_params["sigma_b"],
-                                        outcome_scale=outcome_params["boarders"])
+                                        outcome_scale=outcome_params["boarders"], mu=outcome_params.get("mu_b",0))
 
     # underlying state
     underlying_state = baseline_drift.copy()
@@ -44,6 +44,16 @@ def simulate_outcome(outcome_params, data, length, dependencies, causal_effects,
     return baseline_drift, underlying_state, observation
 
 
+def normalize(data):
+    """
+    Normalize Data
+    :param data:
+    :return:
+    """
+    data = np.array(data)
+    return (data - data.mean())/data.std()
+
+
 def simulate_treatment(study_design, days_per_period, treatment, dependencies, params, causal_effects, data):
     """
     Simulates a treatment with given parameters
@@ -67,11 +77,11 @@ def simulate_treatment(study_design, days_per_period, treatment, dependencies, p
 
     # Add dependencies
     for dependency in dependencies:
-        treatment_arr += np.array(data[dependency]) * causal_effects[
+        treatment_arr += normalize(data[dependency]) * causal_effects[
             "{} -> {}".format(dependency, treatment)]
     
     # Clip treatment to 1 or 0 
-    treatment_arr = np.where(np.array(treatment_arr)>= 0.5, 1, 0)
+    treatment_arr = np.where(np.array(treatment_arr) >= 0.5, 1, 0)
 
     # Get Params
     gamma = params["gamma"]
@@ -103,7 +113,7 @@ def gen_treatment_effect(treatment, gamma, tau, treatment_effect):
     return x
 
 
-def gen_baseline_drift(x_0, length, sigma=1, outcome_scale=None):
+def gen_baseline_drift(x_0, length, sigma=1, mu=0, outcome_scale=None):
     """
     Generates the baseline drift
     :param x_0: start baseline
@@ -118,7 +128,7 @@ def gen_baseline_drift(x_0, length, sigma=1, outcome_scale=None):
             last_day = x_0
         else:
             last_day = drift[day - 1]
-        drift_est = last_day + np.random.normal(0, sigma)
+        drift_est = last_day + np.random.normal(mu, sigma)
         if outcome_scale:
             drift_est = max(drift_est, outcome_scale[0])
             drift_est = min(drift_est, outcome_scale[1])
@@ -171,7 +181,10 @@ def gen_unit_distribution(min_value=0, max_value=10, **_args):
     :param _args:
     :return:
     """
-    return np.random.randint(min_value, max_value)
+    if min_value<=max_value:
+        return np.random.randint(min_value, max_value)
+    else: 
+        return min_value
 
 
 def gen_poisson_distribution(lam, **_args):
@@ -192,20 +205,22 @@ def gen_distribution(distribution, boarders=(0, 1), **params):
     :param params:
     :return:
     """
-    if distribution == "normal":
+    if distribution.lower() == "normal":
         val = gen_normal_distribution(**params)
-    elif distribution == "flag":
+    elif distribution.lower() == "flag":
         val = gen_flag(**params)
-    elif distribution == "poisson":
+    elif distribution.lower() == "poisson":
         val = gen_poisson_distribution(**params)
-    elif distribution == "unit":
+    elif distribution.lower() == "unit":
         val = gen_unit_distribution(boarders[0], boarders[1])
+    elif distribution.lower() == "not":
+        val = params.get("value", 0)
     else:
         val = None
     
-    if boarders[1]:
+    if boarders[1] and distribution.lower() != "not":
         val = boarders[1] if val > boarders[1] else val 
-    if boarders[0]:
+    if boarders[0] and distribution.lower() != "not":
         val = boarders[0] if val < boarders[0] else val
     return val
 
@@ -288,7 +303,7 @@ class Simulation:
 
         self.variables = parameter["variables"]
         self.dependencies = extract_dependencies(
-            [*self.variables.keys(), *self.exposures_params, self.outcome_params["name"]], parameter["dependencies"])
+            [*self.variables.keys(), *self.exposures_params.keys(), self.outcome_params["name"]], parameter["dependencies"])
         self.effect_sizes = parameter["dependencies"]
         if "over_time_dependencies" in parameter.keys():
             self.over_time_dependencies = parameter["over_time_dependencies"]
@@ -337,7 +352,6 @@ class Simulation:
         result = {'patient_id': [patient_id]*length,
                   'date': dti,
                   'block': block,
-                  'treatment': treatment,
                   'day': list(range(1,length+1))}
 
         for node in ordered_node:
@@ -366,9 +380,11 @@ class Simulation:
             # if node is variable
             else:
                 result[node] = simulate_node(node, self.dependencies[node], length, result, params=self.variables[node],
-                                             causal_effects=self.effect_sizes,over_time_effects = self.over_time_dependencies[node])
+                                             causal_effects=self.effect_sizes,
+                                             over_time_effects=self.over_time_dependencies[node])
 
         data = pd.DataFrame(result)
+        data['treatment'] = data[list(self.exposures_params.keys())].idxmax(axis=1)
 
         if drop_out:
             return data, gen_drop_out(data.copy(), **drop_out)
