@@ -246,9 +246,17 @@ def simulate_node(node, dependencies, length, data, params, causal_effects, over
             for dependency in dependencies:
                 variable += data[dependency][i] * causal_effects["{} -> {}".format(dependency, node)]
             if over_time_effects:
+                # Iterate over all variables with an effect on out node
                 for dependency in list(over_time_effects):
+                    # Iterate over all lags
                     for lag, effect in  enumerate(over_time_effects[dependency]["effects"]):
-                        variable += data[dependency][i-1-lag] * effect if (i-1-lag)>=0 else 0 
+                        # Get the data of the dependeny
+                        dependent_data = data.get(dependency, [])
+                        # Get the value of the lagged variable, if the data is already simulated:
+                        flag_lagged_value_in_study_period = (i-lag)>0
+                        flag_lagged_value_is_simulated = len(dependent_data)>=(i-lag)
+                        if (flag_lagged_value_in_study_period) and (flag_lagged_value_is_simulated):
+                            variable +=  dependent_data[i-1-lag] * effect      
             result.append(variable)
     if params["boarders"]:
         if params["boarders"][0]:
@@ -313,6 +321,7 @@ class Simulation:
             self.drop_out = parameter["drop_out"]
         else:
             self.drop_out = {}
+
 
     def gen_patient(self, study_design, days_per_period, patient_id = 0, drop_out=None, first_day='2018-01-01'):
         """
@@ -389,6 +398,7 @@ class Simulation:
         if drop_out:
             return data, gen_drop_out(data.copy(), **drop_out)
         return data
+
 
     def plot_patient(self, patient):
         """
