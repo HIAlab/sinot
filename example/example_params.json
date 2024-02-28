@@ -38,7 +38,7 @@
         "Treatment_1 -> Uncertain_Low_Back_Pain": 1,
         "Treatment_2 -> Uncertain_Low_Back_Pain": 1
     },
-    "over-time-dependencies": {
+    "over_time_dependencies": {
         "Uncertain_Low_Back_Pain": {
             "Activity": {
                 "effects": [-0.001, -0.0001]
