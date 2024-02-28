@@ -33,7 +33,7 @@ This project is build on `python 3.8` and is using following libraries:
 * Pandas
 * (Matplotlib)
 
-For detailed description you can have a look into `requirements.txt`.
+For detailed description you can have a look into `pyproject.toml`.
 
 
 <!-- GETTING STARTED -->
@@ -45,9 +45,6 @@ Here you can see, how to use the library.
 Python is required for this package. For that, I used anaconda and created my own environment with in it. 
 Afterwards I installed all requirements within this environment with:
 
-```shell
-pip install -r requirements.txt
-```
 
 ### Installation
 
@@ -55,36 +52,45 @@ pip install -r requirements.txt
 ```shell
 git clone https://github.com/thogaertner/n-of-1-simulation
 ```
-2. Use the python functions within python or shell
+2. Install package with pip
+```shell
+pip install -e path_to_project
+```
 
 
 <!-- USAGE EXAMPLES -->
 ## Usage
 
 ### Create Study Parameters
-This project consists of 2 functions. The first oen is `creat_study_parameters.py`. It transforms a DAGitty text file into the parameter file.
-A DAGitty text file could be found at `./example/dagitty_example.txt`. 
+This project consists of 2 functions. The first one is `create_study_parameters`. It transforms a DAGitty text file into the parameter file.
+A DAGitty text file could be found at `./example/parameter/dagitty_example.txt`. 
 
 A study parameter file `out.json` could be created by using:
 ```shell
-python create_study_params.py ./example/dagitty_example.txt example/out.json
+python ./src/sinot/create_study_params.py ./example/parameter/dagitty_example.txt ./example/parameter/out.json
 ```
 
-If you need help, you can simply use the option `--help`:
-```shell 
-python create_study_params.py --help
+For further information checkout `--help`.
+
+Alternativly you can directly use the function `create_study_params` from `sinot.create_study_params`. It returns a json file containing all dependencies from your dag with default parameters:
+
+```python
+from sinot.create_study_params import create_study_params
+dagitty_file = "path_to_your_file"
+study_params = create_study_params(dagitty_file)
 ```
 
 ### Simulate Data
 
-To simulate data, you use functions from `simulation.py` to create a cohort based on a parameters file.
+To simulate data, you use the class `sinot.Simulation` to create a cohort based on a parameters file.
 
 ```python
+from sinot.Simulation import Simulation
 sim = Simulation(study_params)
 pat_complete, pat_drop = sim.gen_patient(study_design, days_per_period, drop_out=drop_out)
 ```
 
-A complete example of simulation data could be found in `Simulate_Example.ipynb`.
+A complete example of simulation data could be found in `example/Simulate_Example.ipynb`.
 
 
 <!-- CONTRIBUTING -->
