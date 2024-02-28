@@ -1,5 +1,5 @@
-/data/
-/.ipynb_checkpoints/
+data/*
+.ipynb_checkpoints/*
 New Simultaion.ipynb
 Nof1_Analyze_Data.ipynb
 Nof1_simulate_data.ipynb
@@ -9,12 +9,13 @@ Simulation_Strong_Carry_Over.ipynb
 .idea/
 __pycache__/
 simulation_params/
-.gitignore
 Simulation_Activity_Experiment.ipynb
 R_Daggity.Rmd
-.gitignore
 Simulation_Final_Analysis.ipynb
 Simulation_SimPatDat.ipynb
 Simulation_Strong_Confounding.ipynb
 Simulation_Strong.ipynb
 Untitled-1.md
+data_ulbp/*
+build/*
+src/sinot.egg-info
