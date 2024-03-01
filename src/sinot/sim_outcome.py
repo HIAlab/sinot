@@ -3,7 +3,7 @@
 
 import numpy as np
 
-def simulate_outcome(outcome_params, data, length, dependencies, causal_effects, treatments, boarders=(0, 15), over_time_effects={}):
+def simulate_outcome(outcome_params, data, length, dependencies, causal_effects, treatments, over_time_effects={}):
     """Simulates an outcome based on given parameters
 
     Args:
@@ -13,13 +13,15 @@ def simulate_outcome(outcome_params, data, length, dependencies, causal_effects,
         dependencies (list): list with names of node having an effect on the outcome.
         causal_effects (dict): dict with a list of causal effects and their (linear) effect size.
         treatments (list): list of treatments
-        boarders (tuple, optional): tuple of (lower, upper) bound. Defaults to (0, 15).
         over_time_effects (dict, optional): Specified over time dependencies. Defaults to None.
 
     Returns:
         tuple: baseline_drift, underlying_state, observation
     """
     
+    boarders = outcome_params.get("boarders", ())
+    digits = outcome_params.get("digits", 0)
+
     # Generate baseline drift
     baseline_drift = gen_baseline_drift(x_0=outcome_params["X_0"], length=length, sigma=outcome_params["sigma_b"],
                                         outcome_scale=outcome_params["boarders"], mu=outcome_params.get("mu_b",0))
@@ -40,14 +42,18 @@ def simulate_outcome(outcome_params, data, length, dependencies, causal_effects,
                 for lag, effect in  enumerate(over_time_effects[dependency]["effects"]):
                     underlying_state[i] += data[dependency][i-1-lag] * effect if (i-1-lag)>=0 else 0 
 
-    underlying_state = [boarders[1] if u > boarders[1] else u for u in underlying_state]
-    underlying_state = [boarders[0] if u < boarders[0] else u for u in underlying_state]
+    if len(boarders)==1:
+        underlying_state = [boarders[0] if u < boarders[0] else u for u in underlying_state]
+    elif len(boarders)>=2:
+        underlying_state = [boarders[1] if u > boarders[1] else u for u in underlying_state]
 
     # Observation
-    observation = [round(u + np.random.normal(0, outcome_params["sigma_0"])) for u in underlying_state]
+    observation = [round(u + np.random.normal(0, outcome_params["sigma_0"]), digits) for u in underlying_state]
 
-    observation = [boarders[1] if u > boarders[1] else u for u in observation]
-    observation = [boarders[0] if u < boarders[0] else u for u in observation]
+    if len(boarders)==1:
+        observation = [boarders[0] if u > boarders[1] else u for u in observation]
+    elif len(boarders)>=2:
+        observation = [boarders[1] if u < boarders[0] else u for u in observation]
 
     return baseline_drift, underlying_state, observation
 
