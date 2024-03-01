@@ -107,7 +107,7 @@ class Simulation:
                                              over_time_effects=self.over_time_dependencies[node])
 
         data = pd.DataFrame(result)
-        data['treatment'] = data[list(self.exposures_params.keys())].idxmax(axis=1)
+        data['Treatment'] = treatment
 
         if drop_out:
             return data, gen_drop_out(data.copy(), **drop_out)
