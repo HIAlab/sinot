@@ -22,7 +22,7 @@ class Simulation:
         self.exposures_params = parameter["exposures"]
         self.outcome_params = parameter["outcome"]
 
-        self.variables = parameter["variables"]
+        self.variables = parameter.get("variables", {})
         self.dependencies = extract_dependencies(
             [*self.variables.keys(), *self.exposures_params.keys(), self.outcome_params["name"]], parameter["dependencies"])
         self.effect_sizes = parameter["dependencies"]
@@ -58,13 +58,14 @@ class Simulation:
             dependencies = [(n, set(dependency_dict[n])) for n in dependency_dict]
             while len(dependencies) > 0:
                 dependencies.sort(key=lambda s: len(s[1]))
+                # if no dependency is present, we can add it to the final model
                 if len(dependencies[0][1]) == 0:
                     n = dependencies.pop(0)[0]
                     final_order.append(n)
                     for dep in dependencies:
                         dep[1].discard(n)
                 else:
-                    return None
+                    raise ValueError(f"Not possible to order nodes. Could not resolve {dependencies[0][1]}. Please double check, if dependencies following a direct-acyclic-graph (DAG).")
             return final_order
 
         # Order variables based on their dependencies
