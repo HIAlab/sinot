@@ -42,18 +42,18 @@ def simulate_outcome(outcome_params, data, length, dependencies, causal_effects,
                 for lag, effect in  enumerate(over_time_effects[dependency]["effects"]):
                     underlying_state[i] += data[dependency][i-1-lag] * effect if (i-1-lag)>=0 else 0 
 
-    if len(boarders)==1:
+    if len(boarders)>=1:
         underlying_state = [boarders[0] if u < boarders[0] else u for u in underlying_state]
-    elif len(boarders)>=2:
-        underlying_state = [boarders[1] if u > boarders[1] else u for u in underlying_state]
+        if len(boarders)>=2:
+            underlying_state = [boarders[1] if u > boarders[1] else u for u in underlying_state]
 
     # Observation
     observation = [round(u + np.random.normal(0, outcome_params["sigma_0"]), digits) for u in underlying_state]
 
-    if len(boarders)==1:
-        observation = [boarders[0] if u > boarders[1] else u for u in observation]
-    elif len(boarders)>=2:
-        observation = [boarders[1] if u < boarders[0] else u for u in observation]
+    if len(boarders)>=1:
+        observation = [boarders[0] if u < boarders[0] else u for u in observation]
+        if len(boarders)>=2:
+            observation = [boarders[1] if u > boarders[1] else u for u in observation]
 
     return baseline_drift, underlying_state, observation
 
