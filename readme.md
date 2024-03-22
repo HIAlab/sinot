@@ -48,6 +48,12 @@ Afterwards I installed all requirements within this environment with:
 
 ### Installation
 
+You can directly install the current version: 
+```shell
+pip install --upgrade https://github.com/HIAlab/sinot/tarball/master
+```
+
+Alternativly, you can clone the repo and install it with binding to the repo.
 1. Clone the repo
 ```shell
 git clone https://github.com/thogaertner/n-of-1-simulation
@@ -56,6 +62,7 @@ git clone https://github.com/thogaertner/n-of-1-simulation
 ```shell
 pip install -e path_to_project
 ```
+
 
 
 <!-- USAGE EXAMPLES -->
