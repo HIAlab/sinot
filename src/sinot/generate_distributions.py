@@ -4,7 +4,7 @@
 import numpy as np
 
 
-def gen_normal_distribution(mean=0, std=1, **_args) -> float:
+def gen_normal_distribution(mu=0, sigma=1, **_args) -> float:
     """Generates a value from a normal disctribution
 
     Args:
@@ -14,7 +14,7 @@ def gen_normal_distribution(mean=0, std=1, **_args) -> float:
     Returns:
         float: Random Variable
     """
-    return np.random.normal(mean, std)
+    return np.random.normal(mu, sigma)
 
 
 def gen_flag(p1=0.5, **_args) -> int:
@@ -29,16 +29,16 @@ def gen_flag(p1=0.5, **_args) -> int:
     return 1 if np.random.normal(0, 100) <= p1 * 100 else 0
 
 
-def gen_unit_distribution(min_value=0, max_value=10, **_args) -> float:
-    """Generates a value from a unit distribution.
+def gen_unit_distribution(boarders: tuple, **_args) -> float:
+    """_summary_
 
     Args:
-        min_value (int, optional): Minimum value. Defaults to 0.
-        max_value (int, optional): Maximum value. Defaults to 10.
+        boarders (tuple): _description_
 
     Returns:
-        float: Random Value.
+        float: _description_
     """
+    min_value, max_value = boarders
     if min_value<=max_value:
         return float(np.random.randint(min_value, max_value))
     else: 
@@ -57,12 +57,11 @@ def gen_poisson_distribution(lam, **_args)->float:
     return float(np.random.poisson(lam=lam))
 
 
-def gen_distribution(distribution:str, boarders=(0, 1), **params)->float:
+def gen_distribution(distribution:str="normal", **params)->float:
     """Generate the distribution.
 
     Args:
         distribution (str): Name of distribution. Valid Names: 'normal', 'flag', 'poisson', 'unit'. If none of it, it returns 'value' from params or 0.
-        boarders (tuple, optional): min and max values. The random numbers will be cut off in those boarders. Defaults to (0, 1).
 
     Returns:
         float: random value.
@@ -74,12 +73,7 @@ def gen_distribution(distribution:str, boarders=(0, 1), **params)->float:
     elif distribution.lower() == "poisson":
         val = gen_poisson_distribution(**params)
     elif distribution.lower() == "unit":
-        val = gen_unit_distribution(boarders[0], boarders[1])
+        val = gen_unit_distribution(**params)
     else:
         val = params.get("value", 0)
-    
-    if boarders[1] and distribution.lower() != "not":
-        val = boarders[1] if val > boarders[1] else val 
-    if boarders[0] and distribution.lower() != "not":
-        val = boarders[0] if val < boarders[0] else val
     return float(val)

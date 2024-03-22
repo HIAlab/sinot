@@ -4,12 +4,12 @@
 import numpy as np
 import pandas as pd
 
-def gen_drop_out(data, fraction = 1, vacation = 0, drop_columns = None, kind="MAR", mnar_weight_column=None):
+def gen_drop_out(data:pd.DataFrame, fraction:float = 1, vacation:int = 0, drop_columns:list = None, kind:str="MAR", mnar_weight_column:str=None):
     """This function generates a random drop out by using pandas.DataFrame.sample(). The weights for MAR were calculated by the time, for MNAR were given through the mnar_weight_column.
 
     Args:
-        data (pandas df): pandas df with patient data
-        fraction (float, optional): fraction of sampling. Defaults to None.
+        data (pd.DataFrame): pandas df with patient data
+        fraction (float, optional): fraction of sampling. Defaults to 1.
         vacation (int, optional): number of vacation days. Defaults to 0.
         drop_columns (list, optional): list of columns, which are deleted for missing values. Defaults to None.
         kind (str, optional): Givin the kind of missingness. Defaults to "MAR".

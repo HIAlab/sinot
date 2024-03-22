@@ -17,21 +17,29 @@ def normalize(data):
     return (data - data.mean())/data.std()
 
 
-def extract_dependencies(nodes, dependencies):
+def extract_dependencies(nodes:list, dependencies:dict):
     """Transform dependencies from the file into a dependency dictionary.
 
-    Args:
-        nodes (list): List with names of nodes.
-        dependencies (list, dict): Contains all dependencies.
+     Args:
+         nodes (list): List with names of nodes.
+         dependencies (dict): Contains all dependencies.
 
     Returns:
-        dict: Dict with all dependencies
+         dict: Dict with all dependencies
     """
-    dependencies_dict = {}
-    for node in nodes:
-        dependencies_dict[node] = []
-    for dependency in dependencies:
-        effect_from, effect_on = dependency.split(" -> ")
-        dependencies_dict[effect_on].append(effect_from)
-    return dependencies_dict
-
+    dependency_dict = {n:{} for n in nodes}
+    for key, value in zip(dependencies.keys(),dependencies.values()):
+        if " -> " in key:
+            f, t = key.split(" -> ")
+            effect_size = value
+            if not(t in dependency_dict.keys()):
+                dependency_dict[t] = {}
+            dependency_dict[t][f] = effect_size
+        elif type(value)==dict:
+            for f in value.keys():
+                t = key
+                effect_size = value[f]
+                if not(t in dependency_dict.keys()):
+                    dependency_dict[t] = {}
+                dependency_dict[t][f] = effect_size
+    return dependency_dict

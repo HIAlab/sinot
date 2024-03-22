@@ -3,12 +3,16 @@ import argparse
 import json
 
 
-def create_study_params(file_path):
+def create_study_params(file_path: str)->dict:
+    """This function creates study parameters based on a daggity text file.
+
+    Args:
+        file_path (str): path to daggity.txt
+
+    Returns:
+        dict: Study params
     """
-    This function creates parameters based on a daggity information.
-    :param file_path: path to daggity.txt
-    :return: json with study design.
-    """
+
     f = open(file_path, "r")
     rows = f.read().split("\n")
     rows = rows[1:-2]
@@ -39,25 +43,27 @@ def create_study_params(file_path):
             outgoing.append(values[0])
             incoming.append(values[2])
 
-    rows_params = {"exposures": {}, "outcome": {}, "variables": {}, "dependencies": {}}
+    rows_params = {"exposure_params": {}, "outcome_params": {}, "variable_params": {}, "dependencies": {}, "over_time_dependencies": {}}
 
     for node in nodes:
         if node in exposures:
-            rows_params["exposures"][node] = {
+            rows_params["exposure_params"][node] = {
                 "gamma": 1,
                 "tau": 1,
                 "treatment_effect": 1}
         elif node in outcomes:
-            rows_params["outcome"] = {
+            rows_params["outcome_params"] = {
                 "name": node,
-                "X_0": 0,
-                "sigma_b": 0.1,
-                "sigma_0": 0.1,
-                "boarders": (-1, 1)}
+                "x_0": {"mu":0, "sigma":1},
+                "baseline_drift": {"mu":0, "sigma":1},
+                "noise":{"mu": 0,"sigma":1}
+                }
         else:
-            rows_params["variables"][node] = def_parmas
-    rows_params["dependencies"] = {"{} -> {}".format(out_edge, in_edge): 1 for out_edge, in_edge in
-                                   zip(outgoing, incoming)}
+            rows_params["variable_params"][node] = def_parmas
+    for out_edge, in_edge in zip(outgoing, incoming):
+        if in_edge not in rows_params["dependencies"].keys():
+            rows_params["dependencies"][in_edge]={}
+        rows_params["dependencies"][in_edge][out_edge] = 1
     return rows_params
 
 
