@@ -1,0 +1,51 @@
+dependencies:
+  Outcome:
+    Steps_per_Day: -0.001
+    Treatment_1: -1
+    Treatment_2: -1
+  Steps_per_Day:
+    Age: -10
+    Treatment_1: -100
+    Treatment_2: -200
+exposure_params:
+  Treatment_1:
+    treatment_effect: 1
+  Treatment_2:
+    gamma: 2
+    tau: 4
+    treatment_effect: 3
+outcome_params:
+  baseline_drift:
+    mu: 0
+    sigma: 0.1
+  boarders:
+  - 0
+  - 20
+  digits: 1
+  name: Outcome
+  noise:
+    mu: 0
+    sigma: 0.1
+  x_0:
+    mu: 10
+    sigma: 1
+over_time_dependencies:
+  Outcome:
+    Steps_per_Day:
+    - -0.0001
+    - -5.0e-05
+variable_params:
+  Age:
+    boarders:
+    - 18
+    - 60
+    constant: true
+    distribution: unit
+  Steps_per_Day:
+    boarders:
+    - 0
+    - null
+    digits: 0
+    distribution: normal
+    mu: 5000
+    sigma: 500
