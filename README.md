@@ -125,6 +125,8 @@ Project Link: [https://www.github.com/HIAlab/sinot](https://www.github.com/HIAla
 <!-- ACKNOWLEDGEMENTS -->
 ## Acknowledgements
 
+Thanks to everyone, who supported this project!
+
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 [contributors-shield]: https://img.shields.io/github/contributors/thogaertner/sinot.svg?style=flat-square
