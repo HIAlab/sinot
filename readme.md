@@ -97,7 +97,9 @@ sim = Simulation(study_params)
 pat_complete, pat_drop = sim.gen_patient(study_design, days_per_period, drop_out=drop_out)
 ```
 
-A complete example of simulation data could be found in `example/Simulate_Example.ipynb`.
+### Tutorial
+
+A complete Tutorial with all parameters of simulation data cam be found in [`example/Tutorial.ipynb`](example/Tutorial.ipynb).
 
 
 <!-- CONTRIBUTING -->
