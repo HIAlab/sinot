@@ -222,7 +222,7 @@ class Trial:
         patient_data_complete = []
         patient_data_dropout = []
         for patient_id in range(start_id, nb_patients+start_id):
-            _dat_complete, _dat_dropout = self.simulate_patient(treatment_plan=treatment_plan, patient_id=patient_id, drop_out=dropout_params, first_day=first_day)
+            _dat_complete, _dat_dropout = self.simulate_patient(treatment_plan=treatment_plan, patient_id=patient_id, dropout_params=dropout_params, first_day=first_day)
             patient_data_complete.append(_dat_complete)
             patient_data_dropout.append(_dat_dropout)
         return pd.concat(patient_data_complete, axis=0).reset_index(drop=True), pd.concat(patient_data_dropout, axis=0).reset_index(drop=True)
