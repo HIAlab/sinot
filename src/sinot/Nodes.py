@@ -4,6 +4,14 @@
 from .generate_distributions import gen_distribution
 import numpy as np
 
+
+DEFAULT_OUTCOME_PARAMS = dict(
+    x_0 = {"mu":0, "sigma":0},     # Specifies the start point
+    baseline_drift={"mu": 0,"sigma":0},   # Specifies the baseline drift
+    noise={"mu": 0,"sigma":0} # Specifies Noise
+)
+
+
 class AbstractVariable:
     name = "C"
     params = {}
@@ -160,7 +168,11 @@ class Outcome(Node):
             dependencies (dict, optional): Specify effect of variables on this node. Defaults to {}.
             overtime_dependencies (dict, optional): Specify over time effects of variables on this node. Defaults to {}.
         """
-        super().__init__(name, params, dependencies, overtime_dependencies)
+        # Copy the default params and update the dict, so that changes from the user will be applied, but all parameters were set. 
+        default_params = DEFAULT_OUTCOME_PARAMS.copy()
+        default_params.update(params)
+        # Super init
+        super().__init__(name, default_params, dependencies, overtime_dependencies)
 
 
     def _simulate_baseline_drift(self, history:list, mu:float, sigma:float) -> float:
@@ -200,7 +212,7 @@ class Outcome(Node):
         x_us = self._simulate_dependencies(x_bd, current_data=current_data)
         x_us = self._simulate_over_time_dependencies(x_us, history=history)
         # generate observation
-        noise_params = self.params.get("noise",{"distribution":"normal", "mu":0, "sigma":1})
+        noise_params = self.params.get("noise",{"distribution":"normal", "mu":0, "sigma":0})
         x_o = x_us + gen_distribution(**noise_params)
         x_o = self._check_variable(x_o)
         return {f"{self.name}_baseline_drift": x_bd, f"{self.name}_underlying_state": x_us, self.name: x_o}
